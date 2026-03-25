@@ -1,8 +1,13 @@
 {
   "manifest_version": 3,
-  "name": "Console Cleaner",
-  "version": "1.0",
+  "name": "Blazor Console Cleaner",
+  "version": "1.0.0",
   "description": "Clean Blazor/WASM stack trace garbage from copied DevTools console output. Press Alt+Shift+C after copying to clean your clipboard.",
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  },
   "permissions": [
     "activeTab",
     "scripting",
