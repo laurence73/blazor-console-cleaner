@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "Console Cleaner",
+  "version": "1.0",
+  "description": "Clean Blazor/WASM stack trace garbage from copied DevTools console output. Press Alt+Shift+C after copying to clean your clipboard.",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "clipboardRead",
+    "clipboardWrite"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icon16.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["content.js"],
+      "run_at": "document_start"
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "commands": {
+    "clean-clipboard": {
+      "suggested_key": {
+        "default": "Alt+Shift+C"
+      },
+      "description": "Clean clipboard from stack traces"
+    }
+  }
+}
