@@ -53,19 +53,32 @@ Developer Tools
 ## Language
 English
 
-## Privacy Policy Justification
+## Privacy Practices Tab - Copy/Paste These:
 
-### Why clipboardRead permission?
-The extension reads your clipboard ONLY when you press Alt+Shift+C or click "Clean Clipboard". It reads the copied console text so it can remove the stack trace garbage.
+### Single Purpose Description
+Clean Blazor/WASM stack trace garbage from clipboard when copying DevTools console output.
 
-### Why clipboardWrite permission?
-After cleaning the text, the extension writes the cleaned version back to your clipboard so you can paste it.
+### activeTab Justification
+Required to execute the clipboard cleaning script when the user presses the Alt+Shift+C keyboard shortcut. Only activates on user action, never automatically.
 
-### Why activeTab + scripting permissions?
-The keyboard shortcut (Alt+Shift+C) needs to execute a script in the active tab to access the clipboard API. This only runs when YOU trigger it.
+### clipboardRead Justification
+Required to read console text that the user has copied to their clipboard. The extension reads clipboard content only when the user explicitly triggers cleaning via Alt+Shift+C or the popup button. No automatic clipboard monitoring.
 
-### Data Collection
-This extension does NOT collect, store, or transmit any data. All processing happens locally in your browser. No analytics, no tracking, no network requests.
+### clipboardWrite Justification
+Required to write the cleaned text back to the clipboard after removing stack trace garbage. Only writes when explicitly triggered by the user.
+
+### scripting Justification
+Required to execute the clipboard read/write operations in the active tab when the user presses Alt+Shift+C. The Clipboard API requires a page context to function. Script only runs on explicit user action.
+
+### Remote Code Justification
+This extension does NOT use any remote code. All JavaScript is bundled locally in the extension package. No external scripts are loaded.
+
+### Data Use Certification
+- This extension does NOT collect any user data
+- This extension does NOT transmit any data externally
+- All processing happens locally in the browser
+- No analytics, tracking, or network requests
+- Clipboard data is only read when user triggers cleaning and is never stored
 
 ## Screenshots Needed
 1. Before/after comparison showing messy console output vs cleaned output

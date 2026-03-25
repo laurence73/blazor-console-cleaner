@@ -6,10 +6,8 @@
       box-sizing: border-box;
     }
     body {
-      width: 450px;
-      min-height: 300px;
-      max-height: 500px;
-      padding: 10px;
+      width: 320px;
+      padding: 16px;
       font-family: 'Segoe UI', Tahoma, sans-serif;
       font-size: 13px;
       margin: 0;
@@ -17,106 +15,78 @@
       color: #d4d4d4;
     }
     h3 {
-      margin: 0 0 10px 0;
-      font-size: 14px;
+      margin: 0 0 12px 0;
+      font-size: 15px;
       color: #fff;
-    }
-    .controls {
       display: flex;
+      align-items: center;
       gap: 8px;
-      margin-bottom: 10px;
+    }
+    h3::before {
+      content: "✨";
+    }
+    .description {
+      margin-bottom: 16px;
+      line-height: 1.5;
+      color: #9d9d9d;
     }
     button {
-      padding: 6px 12px;
+      width: 100%;
+      padding: 12px 16px;
       border: none;
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
-      font-size: 12px;
-      background: #0e639c;
+      font-size: 14px;
+      font-weight: 500;
+      background: linear-gradient(135deg, #512BD4, #7B3FF2);
       color: white;
+      transition: transform 0.1s, box-shadow 0.1s;
     }
     button:hover {
-      background: #1177bb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(123, 63, 242, 0.4);
     }
-    button.secondary {
-      background: #3c3c3c;
-    }
-    button.secondary:hover {
-      background: #4c4c4c;
-    }
-    #logs {
-      background: #252526;
-      border: 1px solid #3c3c3c;
-      border-radius: 4px;
-      padding: 8px;
-      height: 200px;
-      overflow-y: auto;
-      font-family: Consolas, monospace;
-      font-size: 11px;
-      white-space: pre-wrap;
-      word-break: break-all;
-    }
-    .log-entry {
-      padding: 2px 0;
-      border-bottom: 1px solid #2d2d2d;
-    }
-    .log-entry:last-child {
-      border-bottom: none;
-    }
-    .log-entry.error {
-      color: #f48771;
-    }
-    .log-entry.warn {
-      color: #cca700;
-    }
-    .log-entry.info {
-      color: #75beff;
-    }
-    .timestamp {
-      color: #6a9955;
-      margin-right: 8px;
-    }
-    .type {
-      color: #569cd6;
-      margin-right: 8px;
-      text-transform: uppercase;
-      font-size: 10px;
+    button:active {
+      transform: translateY(0);
     }
     #status {
-      margin-top: 8px;
-      font-size: 11px;
+      margin-top: 12px;
+      font-size: 12px;
       color: #6a9955;
-      min-height: 16px;
+      min-height: 18px;
+      text-align: center;
     }
     .shortcut-hint {
       font-size: 11px;
-      color: #808080;
-      margin-top: 8px;
+      color: #6d6d6d;
+      margin-top: 16px;
+      text-align: center;
+      border-top: 1px solid #333;
+      padding-top: 12px;
     }
     kbd {
       background: #3c3c3c;
-      padding: 2px 6px;
-      border-radius: 3px;
+      padding: 3px 8px;
+      border-radius: 4px;
       font-family: Consolas, monospace;
+      font-size: 11px;
+      color: #fff;
     }
   </style>
 </head>
 <body>
-  <h3>Console Cleaner</h3>
+  <h3>Blazor Console Cleaner</h3>
 
-  <div class="controls">
-    <button id="copyLogs">Copy Clean Logs</button>
-    <button id="refresh" class="secondary">Refresh</button>
-    <button id="clear" class="secondary">Clear</button>
-    <button id="cleanClipboard">Clean Clipboard</button>
-  </div>
+  <p class="description">
+    Removes Blazor/WASM stack traces and source references from your clipboard.
+  </p>
 
-  <div id="logs">Loading...</div>
+  <button id="cleanClipboard">Clean Clipboard</button>
 
   <div id="status"></div>
 
   <div class="shortcut-hint">
-    Tip: <kbd>Alt+Shift+C</kbd> cleans clipboard instantly
+    Tip: Use <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd> anytime
   </div>
 
   <script src="popup.js"></script>

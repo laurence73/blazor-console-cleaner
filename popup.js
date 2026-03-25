@@ -30,9 +30,9 @@ const TRAILING_GARBAGE = [
   /\s+invoke-js\.ts:\d+\s*$/,
   /\s+marshal-to-cs\.ts:\d+\s*$/,
   /\s+cancelable-promise\.ts:\d+\s*$/,
-  /\s+[\w\-]+\.ts:\d+\s*$/,  // Generic .ts file references
-  /\s+[\da-f]{8}:0x[\da-f]+\s*$/i,  // WASM addresses
-  /\t+\S+\.(js|ts):\d+\s*$/,  // Tab-separated source refs
+  /\s+[\w\-]+\.ts:\d+\s*$/,
+  /\s+[\da-f]{8}:0x[\da-f]+\s*$/i,
+  /\t+\S+\.(js|ts):\d+\s*$/,
 ];
 
 function cleanText(text) {
@@ -40,19 +40,17 @@ function cleanText(text) {
     .split('\n')
     .filter(line => {
       const trimmed = line.trim();
-      if (!trimmed) return false; // Remove empty lines
-      // Remove lines that are entirely garbage
+      if (!trimmed) return false;
       return !GARBAGE_LINE_PATTERNS.some(pattern => pattern.test(line));
     })
     .map(line => {
-      // Strip trailing source references from lines with actual content
       let cleaned = line;
       for (const pattern of TRAILING_GARBAGE) {
         cleaned = cleaned.replace(pattern, '');
       }
       return cleaned.trimEnd();
     })
-    .filter(line => line.trim()) // Remove any lines that became empty
+    .filter(line => line.trim())
     .join('\n')
     .trim();
 }
@@ -61,66 +59,17 @@ function showStatus(message, isError = false) {
   const status = document.getElementById('status');
   status.textContent = message;
   status.style.color = isError ? '#f48771' : '#6a9955';
-  setTimeout(() => { status.textContent = ''; }, 2000);
-}
-
-async function loadLogs() {
-  const logsDiv = document.getElementById('logs');
-
-  try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    const response = await chrome.tabs.sendMessage(tab.id, { type: 'GET_LOGS' });
-
-    if (response && response.logs && response.logs.length > 0) {
-      logsDiv.innerHTML = response.logs.map(log => {
-        return `<div class="log-entry ${log.type}"><span class="timestamp">${log.timestamp}</span><span class="type">${log.type}</span>${escapeHtml(log.message)}</div>`;
-      }).join('');
-      logsDiv.scrollTop = logsDiv.scrollHeight;
-    } else {
-      logsDiv.textContent = 'No logs captured yet. Refresh the page to start capturing.';
-    }
-  } catch (err) {
-    logsDiv.textContent = 'Could not connect to page. Try refreshing the page.';
-  }
-}
-
-function escapeHtml(text) {
-  const div = document.createElement('div');
-  div.textContent = text;
-  return div.innerHTML;
-}
-
-async function copyLogs() {
-  try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    const response = await chrome.tabs.sendMessage(tab.id, { type: 'GET_LOGS' });
-
-    if (response && response.logs && response.logs.length > 0) {
-      const text = response.logs.map(log => `[${log.timestamp}] ${log.type.toUpperCase()}: ${log.message}`).join('\n');
-      await navigator.clipboard.writeText(text);
-      showStatus('Copied ' + response.logs.length + ' log entries!');
-    } else {
-      showStatus('No logs to copy', true);
-    }
-  } catch (err) {
-    showStatus('Failed to copy: ' + err.message, true);
-  }
-}
-
-async function clearLogs() {
-  try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    await chrome.tabs.sendMessage(tab.id, { type: 'CLEAR_LOGS' });
-    document.getElementById('logs').textContent = 'Logs cleared.';
-    showStatus('Logs cleared');
-  } catch (err) {
-    showStatus('Failed to clear', true);
-  }
+  setTimeout(() => { status.textContent = ''; }, 3000);
 }
 
 async function cleanClipboard() {
   try {
     const text = await navigator.clipboard.readText();
+    if (!text.trim()) {
+      showStatus('Clipboard is empty', true);
+      return;
+    }
+
     const cleaned = cleanText(text);
     await navigator.clipboard.writeText(cleaned);
 
@@ -128,16 +77,14 @@ async function cleanClipboard() {
     const cleanedLines = cleaned.split('\n').length;
     const removed = originalLines - cleanedLines;
 
-    showStatus(`Cleaned! Removed ${removed} lines of garbage.`);
+    if (removed > 0) {
+      showStatus(`Cleaned! Removed ${removed} lines of garbage.`);
+    } else {
+      showStatus('Clipboard was already clean!');
+    }
   } catch (err) {
     showStatus('Failed: ' + err.message, true);
   }
 }
 
-document.getElementById('copyLogs').addEventListener('click', copyLogs);
-document.getElementById('refresh').addEventListener('click', loadLogs);
-document.getElementById('clear').addEventListener('click', clearLogs);
 document.getElementById('cleanClipboard').addEventListener('click', cleanClipboard);
-
-// Load logs on popup open
-loadLogs();
